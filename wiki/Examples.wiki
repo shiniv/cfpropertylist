@@ -1,64 +1,64 @@
-#summary Examples for how to use CFPropertyList
+#summary Examples for how to use `CFPropertyList`
 
-= CFPropertyList Examples =
+= `CFPropertyList` Examples =
 
-This page shows how easy PropertyLists can be created and manipulated. More in the [http://code.google.com/p/cfpropertylist/source/browse/#svn/trunk/examples examples directory].
+This page shows how easy `PropertyLists` can be created and manipulated. More in the [http://code.google.com/p/cfpropertylist/source/browse/#svn/trunk/examples examples directory].
 
 
-== Reading PropertyLists ==
+== Reading `PropertyLists` ==
 
-=== Read XML PropertyList ===
+=== Read XML `PropertyList` ===
 {{{
 $plist = new CFPropertyList( '/path/to/sample.xml.plist', CFPropertyList::FORMAT_XML );
 }}}
 
-=== Read Binary PropertyList ===
+=== Read Binary `PropertyList` ===
 {{{
 $plist = new CFPropertyList( '/path/to/sample.binary.plist', CFPropertyList::FORMAT_BINARY );
 }}}
 
-=== Read PropertyList (automatic type-detection) ===
+=== Read `PropertyList` (automatic type-detection) ===
 {{{
 $plist = new CFPropertyList( '/path/to/sample.binary.plist' );
 }}}
 
-== Accessing PropertyList Content ==
+== Accessing `PropertyList` Content ==
 
-=== PropertyList to array() ===
+=== `PropertyList` to array() ===
 {{{
 $array = $plist->toArray();
 }}}
 
-=== PropertyList to XML ===
+=== `PropertyList` to XML ===
 {{{
 $array = $plist->toXML();
 }}}
 
-=== PropertyList to Binary ===
+=== `PropertyList` to Binary ===
 {{{
 $array = $plist->toBinary();
 }}}
 
-== Saving PropertyLists ==
+== Saving `PropertyLists` ==
 
-=== Save XML PropertyList ===
+=== Save XML `PropertyList` ===
 {{{
 $plist->saveXML( '/path/to/sample.xml.plist' );
 }}}
 
-=== Save Binary PropertyList ===
+=== Save Binary `PropertyList` ===
 {{{
 $plist->saveBinary( '/path/to/sample.binary.plist' );
 }}}
 
-=== Save PropertyList as opened ===
+=== Save `PropertyList` as opened ===
 {{{
 $plist->save();
 }}}
 
-== Creating And Manipulating PropertyLists ==
+== Creating And Manipulating `PropertyLists` ==
 
-=== Create PropertyList using the CFPropertyList API ===
+=== Create `PropertyList` using the `CFPropertyList` API ===
 {{{
 $plist = new CFPropertyList();
 $plist->add( $dict = new CFDictionary() );
@@ -71,7 +71,7 @@ $array->add( new CFString( 'John' ) );
 $array->add( new CFString( 'Kyra' ) );
 }}}
 
-=== Create PropertyList by guessing the structure ===
+=== Create `PropertyList` by guessing the structure ===
 {{{
 $structure = array(
   'Year Of Birth' => 1965,
