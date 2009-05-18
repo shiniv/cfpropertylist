@@ -1,4 +1,4 @@
-#summary Examples for how to use `CFPropertyList`
+#summary Examples for how to use CFPropertyList
 
 = `CFPropertyList` Examples =
 
