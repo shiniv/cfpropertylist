@@ -1,0 +1,33 @@
+#summary Explanation of the big integer and negative integer bug
+#labels php,big,integer
+
+= Introduction =
+
+Version 1.0 of CFPropertyList had a bug when dealing with big (> 0xFFFF = 65535) or negative (< 0) integers in binary property lists. This bug was a result of the really silly integer handling of PHP<6.
+
+
+= Details =
+
+Although PHP claims to be plattform independent, integers in PHP are *plattform dependent*. Their size depends on the plattform the PHP interpreter was build for. On 32bit plattforms, they're signed 32bit sized. On 64bit plattforms they're 64bit sized.
+
+Numbers bigger than 0x7FFFFFFF (32bit) 0x7FFFFFFFFFFFFFFF (64bit) get expanded to float. Quick example: I ran `php -r 'var_dump(0x8FFFFFFFFFFFFFFF);'` on different plattforms:
+
+  * Mac OS X, Intel Core2Duo, 32bit: float(1.03762935415E+19)
+  * Linux, Intel Celeron, 32bit: float(1.03762935415E+19)
+  * Linux, Intel Core2Duo, 64bit: float(1.03762935415E+19)
+
+Same machines, different test: I ran `php -r 'var_dump(0x8FFFFFFF);'`, results follow:
+
+  * Mac OS X, Intel Core2Duo, 32bit: float(2415919103)
+  * Linux, Intel Celeron, 32bit: float(2415919103)
+  * Linux, Intel Core2Duo, 64bit: int(2415919103)
+
+As if this is not enough, it seems to be different how PHP handles integer overflows. Quick example: I ran `php -r 'var_dump((int)0x100000000);'` (which, in fact, is 2^32 and needs 64bit integers to be saved) on different plattforms. Results follow:
+
+  * Mac OS X, Intel Core2Duo, 32bit: int(-1)
+  * Linux, Intel Celeron, 32bit: int(0)
+  * Linux, Intel Core2Duo, 64bit: int(4294967296)
+
+But Apples PList format defines negative and large integers to be 64bit big endian integers.
+
+Well, to avoid this bug CFBinaryPropertyList now uses native bit operations on 64bit plattforms and [http://php.net/bc BC] or [http://php.net/gmp GMP] on 32bit plattforms to calculate with integers of 64bit size. So be aware when getting strange results when working with big integers!
