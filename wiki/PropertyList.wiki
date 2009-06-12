@@ -12,4 +12,4 @@ Where the XML based plist can be handled by any system or language by their buil
 
 == plist vs. PHP ==
 
-There are some pitfalls regarding plists and PHP. Where PHP's internal timestamps are unix epoch (seconds since 01.01.1970 00:00:00), plists rely on the Apple epoch (seconds since 01.01.2001 00:00:00).
+There are some pitfalls regarding plists and PHP. Where PHP's internal timestamps are unix epoch (seconds since 01.01.1970 00:00:00), plists rely on the Apple epoch (seconds since 01.01.2001 00:00:00). CFPropertyList will automatically translate between unix and apple epoch, if you don't tell it otherwise.
