@@ -34,10 +34,14 @@ $array = $plist->toArray();
 $array = $plist->toXML();
 }}}
 
+*Note:* You could use this method to directly send your XML formatted PList to the output buffer.
+
 === `PropertyList` to Binary ===
 {{{
 $array = $plist->toBinary();
 }}}
+
+*Note:* You could use this method to directly send your binary formatted PList to the output buffer.
 
 == Saving `PropertyLists` ==
 
