@@ -1,4 +1,5 @@
 #summary Examples for how to use CFPropertyList
+#labels Featured
 
 = `CFPropertyList` Examples =
 
