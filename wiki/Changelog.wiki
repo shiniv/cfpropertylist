@@ -1,4 +1,5 @@
 #summary Summary of changes made to the different releases
+#labels Featured
 
 = `CFPropertyList` Changelog =
 
