@@ -1,0 +1,19 @@
+#summary Summary of changes made to the different releases
+
+= `CFPropertyList` Changelog =
+
+This document presents the changes made to the different releases of `CFPropertyList`.
+
+== CFPropertyList 1.0.2 ==
+This release only introduced new but secondary functionality.
+  * Added [http://php.net/arrayaccess ArrayAccess] implementation (thanks to Sean Coates, who supplied the patch)
+  * now also requiring either [http://php.net/bc BC] or [http://php.net/gmp GMP]
+
+== CFPropertyList 1.0.1 ==
+Since a severe bug has been fixed in this release, an upgrade is strongly recommended.
+  * BigIntegerBug fixed
+  * now also requiring either [http://php.net/bc BC] or [http://php.net/gmp GMP]
+
+== CFPropertyList 1.0.0 ==
+  * First official Release
+  * requiring either [http://php.net/mbstring MBString] or [http://php.net/iconv Iconv]
