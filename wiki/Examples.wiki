@@ -86,6 +86,7 @@ $structure = array(
   'Kids Names' => array( 'John', 'Kyra' ),
 );
 $plist = new CFPropertyList();
-$guessedStructure = CFPropertyList::guess( $structure );
+$td = new CFTypeDetector();  
+$guessedStructure = $td->toCFType( $structure );
 $plist->add( $guessedStructure );
 }}}
