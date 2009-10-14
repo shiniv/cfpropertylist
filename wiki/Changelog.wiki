@@ -5,6 +5,11 @@
 
 This document presents the changes made to the different releases of `CFPropertyList`.
 
+== CFPropertyList 1.0.3 ==
+This release fixed UTF-8/UTF-16 bugs and separated CFPropertyList::guess(), an upgrade is strongly recommended.
+  * Added class `CFTypeDetector` as extensible replacement of CFPropertyList::guess()
+  * Fixed UTF-8/UTF-16 bugs (thanks to Thomas Broquist)
+
 == CFPropertyList 1.0.2 ==
 This release only introduced new but secondary functionality.
   * Added [http://php.net/arrayaccess ArrayAccess] implementation (thanks to Sean Coates, who supplied the patch)
