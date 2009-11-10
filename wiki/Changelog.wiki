@@ -5,6 +5,9 @@
 
 This document presents the changes made to the different releases of `CFPropertyList`.
 
+== CFPropertyList 1.0.4 ==
+This release fixes another UTF-8/UTF-16 bug and some spelling mistakes, an upgrade is strongly recommended.
+
 == CFPropertyList 1.0.3 ==
 This release fixed UTF-8/UTF-16 bugs and separated CFPropertyList::guess(), an upgrade is strongly recommended.
   * Added class `CFTypeDetector` as extensible replacement of CFPropertyList::guess()
