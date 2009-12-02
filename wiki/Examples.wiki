@@ -32,14 +32,14 @@ $array = $plist->toArray();
 
 === `PropertyList` to XML ===
 {{{
-$array = $plist->toXML();
+$xml = $plist->toXML();
 }}}
 
 *Note:* You could use this method to directly send your XML formatted PList to the output buffer.
 
 === `PropertyList` to Binary ===
 {{{
-$array = $plist->toBinary();
+$binarystring = $plist->toBinary();
 }}}
 
 *Note:* You could use this method to directly send your binary formatted PList to the output buffer.
