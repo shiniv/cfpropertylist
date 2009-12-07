@@ -296,7 +296,7 @@ abstract class CFBinaryPropertyList {
        how long the string is in bytes */
     if(strlen($buff = fread($fd, 2*$length)) != 2*$length) throw IOException::readError($fname);
 
-    if(!isset($this->uniqueTable[$buff])) $this->uniqueTable[$buff] = true;
+    if(!isset($this->uniqueTable[$buff])) $this->uniqueTable[$buf] = true;
     return new CFString(self::convertCharset($buff, "UTF-16BE", "UTF-8"));
   }
 
@@ -616,7 +616,7 @@ abstract class CFBinaryPropertyList {
           $this->uniqueTable[$k] = 0;
           $len = self::binaryStrlen($k);
           $this->stringSize += $len + 1;
-          $this->intSize += self::bytesSizeInt(self::charsetStrlen($k,'UTF-8'));
+          $this->intSize += self::bytesSizeInt($len);
         }
 
         $this->objectRefs += 2; // both, key and value, are refs
@@ -631,7 +631,7 @@ abstract class CFBinaryPropertyList {
     }
     elseif($value instanceOf CFData) {
       $val = $value->getValue();
-      $len = strlen($val);
+      $len = self::binaryStrlen($val);
       $this->intSize += self::bytesSizeInt($len);
       $this->miscSize += $len + 1;
       $this->countObjects++;
@@ -643,7 +643,7 @@ abstract class CFBinaryPropertyList {
       $this->uniqueTable[$val] = 0;
       $len = self::binaryStrlen($val);
       $this->stringSize += $len + 1;
-      $this->intSize += self::bytesSizeInt(self::charsetStrlen($val,'UTF-8'));
+      $this->intSize += self::bytesSizeInt($len);
     }
     $this->uniqueTable[$val]++;
   }
@@ -667,7 +667,7 @@ abstract class CFBinaryPropertyList {
     $this->offsets = Array();
 
     $binary_str = "bplist00";
-    $value = $this->getValue(true);
+    $value = $this->getValue();
     $this->uniqueAndCountValues($value);
 
     $this->countObjects += count($this->uniqueTable);
@@ -679,7 +679,7 @@ abstract class CFBinaryPropertyList {
     $this->objectTable = Array();
     $this->writtenObjectCount = 0;
     $this->uniqueTable = Array(); // we needed it to calculate several values
-    $value->toBinary($this);
+    $this->getValue()->toBinary($this);
 
     $object_offset = 8;
     $offsets = Array();
@@ -710,7 +710,7 @@ abstract class CFBinaryPropertyList {
    */
   protected static function binaryStrlen($val) {
     for($i=0;$i<strlen($val);++$i) {
-      if(ord($val{$i}) >= 128) {
+      if(ord($val{$i}) > 128) {
         $val = self::convertCharset($val, 'UTF-8', 'UTF-16BE');
         return strlen($val);
       }
@@ -733,7 +733,7 @@ abstract class CFBinaryPropertyList {
       $utf16 = false;
 
       for($i=0;$i<strlen($val);++$i) {
-        if(ord($val{$i}) >= 128) {
+        if(ord($val{$i}) > 128) {
           $utf16 = true;
           break;
         }
