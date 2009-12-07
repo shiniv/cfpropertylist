@@ -10,8 +10,8 @@
  * @example example-read-02.php Read a Binary PropertyList
  * @example example-read-03.php Read a PropertyList without knowing the type
  * @example example-create-01.php Using the CFPropertyList API
- * @example example-create-02.php Using {@link CFTypeDetector}
- * @example example-create-03.php Using {@link CFTypeDetector} with {@link CFDate} and {@link CFData}
+ * @example example-create-02.php Using CFPropertyList::guess()
+ * @example example-create-03.php Using CFPropertyList::guess() with {@link CFDate} and {@link CFData}
  */
 
 /**
@@ -22,7 +22,6 @@ require_once($plistDirectory.'/IOException.php');
 require_once($plistDirectory.'/PListException.php');
 require_once($plistDirectory.'/CFType.php');
 require_once($plistDirectory.'/CFBinaryPropertyList.php');
-require_once($plistDirectory.'/CFTypeDetector.php');
 
 /**
  * Property List
@@ -34,9 +33,8 @@ require_once($plistDirectory.'/CFTypeDetector.php');
  * @example example-read-02.php Read a Binary PropertyList
  * @example example-read-03.php Read a PropertyList without knowing the type
  * @example example-create-01.php Using the CFPropertyList API
- * @example example-create-02.php Using {@link CFTypeDetector}
- * @example example-create-03.php Using {@link CFTypeDetector} with {@link CFDate} and {@link CFData}
- * @example example-create-04.php Using and extended {@link CFTypeDetector}
+ * @example example-create-02.php Using CFPropertyList::guess()
+ * @example example-create-03.php Using CFPropertyList::guess() with {@link CFDate} and {@link CFData}
  */
 class CFPropertyList extends CFBinaryPropertyList implements Iterator {
   /**
@@ -324,7 +322,7 @@ class CFPropertyList extends CFBinaryPropertyList implements Iterator {
     $plist->setAttribute('version', '1.0');
 
     // add PropertyList's children
-    $plist->appendChild($this->getValue(true)->toXML($doc));
+    $plist->appendChild($this->getValue()->toXML($doc));
 
     return $doc->saveXML();
   }
@@ -340,11 +338,7 @@ class CFPropertyList extends CFBinaryPropertyList implements Iterator {
    * @return void
    * @uses $value for adding $value
    */
-  public function add(CFType $value=null) {
-    // anything but CFType is null, null is an empty string - sad but true
-    if( !$value )
-      $value = new CFString();
-
+  public function add($value) {
     $this->value[] = $value;
   }
 
@@ -357,18 +351,6 @@ class CFPropertyList extends CFBinaryPropertyList implements Iterator {
   public function get($key) {
     if(isset($this->value[$key])) return $this->value[$key];
     return null;
-  }
-  
-  /**
-   * Generic getter (magic)
-   * 
-   * @param integer $key Key of CFType to retrieve from collection
-   * @return CFType CFType found at $key, null else
-   * @author Sean Coates <sean@php.net>
-   * @link http://php.net/oop5.overloading
-   */
-  public function __get($key) {
-    return $this->get($key);
   }
   
   /**
@@ -389,35 +371,73 @@ class CFPropertyList extends CFBinaryPropertyList implements Iterator {
 
   /**
    * Get first (and only) child, or complete collection.
-   * @param string $cftype if set to true returned value will be CFArray instead of an array in case of a collection
    * @return CFType|array CFType or list of CFTypes known to the PropertyList
    * @uses $value for retrieving CFTypes
    */
-  public function getValue($cftype=false) {
+  public function getValue() {
     if(count($this->value) === 1) return $this->value[0];
-    if($cftype) {
-      $t = new CFArray();
-      foreach( $this->value as $value ) $t->add($value);
-      return $t;
-    }
     return $this->value;
   }
 
   /**
    * Create CFType-structure from guessing the data-types.
-   * The functionality has been moved to the more flexible {@link CFTypeDetector} facility.
+   * {@link CFArray}, {@link CFDictionary}, {@link CFBoolean}, {@link CFNumber} and {@link CFString} can be created, {@link CFDate} and {@link CFData} cannot.
+   * <br /><b>Note:</b>Distinguishing between {@link CFArray} and {@link CFDictionary} is done by examining the keys. 
+   * Keys must be strictly incrementing integers to evaluate to a {@link CFArray}. 
+   * Since PHP does not offer a function to test for associative arrays, 
+   * this test causes the input array to be walked twice and thus work rather slow on large collections. 
+   * If you work with large arrays and can live with all arrays evaluating to {@link CFDictionary}, 
+   * feel free to set the appropriate flag.
+   * <br /><b>Note:</b> If $value is an instance of CFType it is simply returned.
+   * <br /><b>Note:</b> If $value is neither a CFType, array, numeric, boolean nor string, it is omitted.
    * @param mixed $value Value to convert to CFType
    * @param boolean $autoDictionary if true {@link CFArray}-detection is bypassed and arrays will be returned as {@link CFDictionary}.
    * @return CFType CFType based on guessed type
-   * @uses CFTypeDetector for actual type detection
-   * @deprecated
    */
   public static function guess($value, $autoDictionary=false) {
-    static $t = null;
-    if( $t === null ) 
-      $t = new CFTypeDetector( $autoDictionary );
-      
-    return $t->toCFType( $value );
+    switch(true) {
+      case $value instanceof CFType:
+        return $value;
+      break;
+      case is_array($value):
+        // test if $value is simple or associative array
+        if(!$autoDictionary) {
+          $numericKeys = true;
+          $previousKey = null;
+          foreach($value as $key => $v) {
+            if(!is_numeric($key) || ($previousKey !== null && $previousKey != $key-1)) {
+              $numericKeys = false;
+              break;
+            }
+
+            $previousKey = $key;
+          } 
+
+          if($numericKeys) {
+            $t = new CFArray();
+            foreach($value as $v) $t->add(self::guess($v, $autoDictionary));
+            return $t;
+          }
+        }
+
+        $t = new CFDictionary();
+        foreach($value as $k => $v) $t->add($k, self::guess($v, $autoDictionary));
+
+        return $t;
+        break;
+
+      case is_numeric($value):
+        return new CFNumber($value);
+        break;
+
+      case is_bool($value):
+        return new CFBoolean($value);
+        break;
+
+      case is_string($value):
+        return new CFString($value);
+        break;
+    }
   }
 
 

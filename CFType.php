@@ -102,10 +102,9 @@ class CFString extends CFType {
   /**
    * Get XML-Node.
    * @param DOMDocument $doc DOMDocument to create DOMNode in
-   * @param string $nodeName For compatibility reasons; just ignore it
    * @return DOMNode &lt;string&gt;-Element
    */
-  public function toXML(DOMDocument $doc,$nodeName="") {
+  public function toXML(DOMDocument $doc) {
     return parent::toXML($doc, 'string');
   }
 
@@ -131,10 +130,9 @@ class CFNumber extends CFType {
    * Get XML-Node.
    * Returns &lt;real&gt; if $value is a float, &lt;integer&gt; if $value is an integer.
    * @param DOMDocument $doc DOMDocument to create DOMNode in
-   * @param string $nodeName For compatibility reasons; just ignore it
    * @return DOMNode &lt;real&gt; or &lt;integer&gt;-Element 
    */
-  public function toXML(DOMDocument $doc,$nodeName="") {
+  public function toXML(DOMDocument $doc) {
     $ret = 'real';
     if(intval($this->value) == $this->value && !is_float($this->value) && strpos($this->value,'.') === false) {
       $this->value = intval($this->value);
@@ -206,10 +204,9 @@ class CFDate extends CFType {
   /**
    * Get XML-Node.
    * @param DOMDocument $doc DOMDocument to create DOMNode in
-   * @param string $nodeName For compatibility reasons; just ignore it
    * @return DOMNode &lt;date&gt;-Element
    */
-  public function toXML(DOMDocument $doc,$nodeName="") {
+  public function toXML(DOMDocument $doc) {
     $text = $doc->createTextNode(gmdate("Y-m-d\TH:i:s\Z",$this->getValue()));
     $node = $doc->createElement("date");
     $node->appendChild($text);
@@ -250,10 +247,9 @@ class CFBoolean extends CFType {
    * Get XML-Node.
    * Returns &lt;true&gt; if $value is a true, &lt;false&gt; if $value is false.
    * @param DOMDocument $doc DOMDocument to create DOMNode in
-   * @param string $nodeName For compatibility reasons; just ignore it
    * @return DOMNode &lt;true&gt; or &lt;false&gt;-Element 
    */
-  public function toXML(DOMDocument $doc,$nodeName="") {
+  public function toXML(DOMDocument $doc) {
     return $doc->createElement($this->value ? 'true' : 'false');
   }
 
@@ -316,10 +312,9 @@ class CFData extends CFType {
   /**
    * Get XML-Node.
    * @param DOMDocument $doc DOMDocument to create DOMNode in
-   * @param string $nodeName For compatibility reasons; just ignore it
    * @return DOMNode &lt;data&gt;-Element
    */
-  public function toXML(DOMDocument $doc,$nodeName="") {
+  public function toXML(DOMDocument $doc) {
     return parent::toXML($doc, 'data');
   }
 
@@ -340,7 +335,7 @@ class CFData extends CFType {
  * @package plist
  * @subpackage plist.types
  */
-class CFArray extends CFType implements Iterator, ArrayAccess {
+class CFArray extends CFType implements Iterator {
   /**
    * Position of iterator {@link http://php.net/manual/en/class.iterator.php}
    * @var integer
@@ -366,15 +361,11 @@ class CFArray extends CFType implements Iterator, ArrayAccess {
 
   /**
    * Add CFType to collection.
-   * @param CFType $value CFType to add to collection, defaults to null which results in an empty {@link CFString}
+   * @param CFType $value CFType to add to collection
    * @return void
    * @uses $value for adding $value
    */
-  public function add(CFType $value=null) {
-    // anything but CFType is null, null is an empty string - sad but true
-    if( !$value )
-      $value = new CFString();
-
+  public function add($value) {
     $this->value[] = $value;
   }
 
@@ -407,10 +398,9 @@ class CFArray extends CFType implements Iterator, ArrayAccess {
   /**
    * Get XML-Node.
    * @param DOMDocument $doc DOMDocument to create DOMNode in
-   * @param string $nodeName For compatibility reasons; just ignore it
    * @return DOMNode &lt;array&gt;-Element
    */
-  public function toXML(DOMDocument $doc,$nodeName="") {
+  public function toXML(DOMDocument $doc) {
     $node = $doc->createElement('array');
 
     foreach($this->value as $value) $node->appendChild($value->toXML($doc));
@@ -493,60 +483,6 @@ class CFArray extends CFType implements Iterator, ArrayAccess {
     return isset($this->value[$this->iteratorPosition]);
   }
 
-  /************************************************************************************************
-   *    ArrayAccess   I N T E R F A C E
-   ************************************************************************************************/
-  
-  /**
-   * Determine if the array's key exists
-   * @param string $key the key to check
-   * @return bool true if the offset exists, false if not
-   * @link http://php.net/manual/en/arrayaccess.offsetexists.php
-   * @uses $value to check if $key exists
-   * @author Sean Coates <sean@php.net>
-   */
-  public function offsetExists($key) {
-    return isset($this->value[$key]);
-  }
-  
-  /**
-   * Fetch a specific key from the CFArray
-   * @param string $key the key to check
-   * @return mixed the value associated with the key; null if the key is not found
-   * @link http://php.net/manual/en/arrayaccess.offsetget.php
-   * @uses get() to get the key's value
-   * @author Sean Coates <sean@php.net>
-   */
-  public function offsetGet($key) {
-    return $this->get($key);
-  }
-  
-  /**
-   * Set a value in the array
-   * @param string $key the key to set
-   * @param string $value the value to set
-   * @return void
-   * @link http://php.net/manual/en/arrayaccess.offsetset.php
-   * @uses setValue() to set the key's new value
-   * @author Sean Coates <sean@php.net>
-   */
-  public function offsetSet($key, $value) {
-    return $this->setValue($value);
-  }
-  
-  /**
-   * Unsets a value in the array
-   * <b>Note:</b> this dummy does nothing
-   * @param string $key the key to set
-   * @return void
-   * @link http://php.net/manual/en/arrayaccess.offsetunset.php
-   * @author Sean Coates <sean@php.net>
-   */
-  public function offsetUnset($key) {
-    
-  }
-  
-  
 }
 
 /**
@@ -589,15 +525,11 @@ class CFDictionary extends CFType implements Iterator {
   /**
    * Add CFType to collection.
    * @param string $key Key to add to collection
-   * @param CFType $value CFType to add to collection, defaults to null which results in an empty {@link CFString}
+   * @param CFType $value CFType to add to collection
    * @return void
    * @uses $value for adding $key $value pair
    */
-  public function add($key, CFType $value=null) {
-    // anything but CFType is null, null is an empty string - sad but true
-    if( !$value )
-      $value = new CFString();
-
+  public function add($key, $value) {
     $this->value[$key] = $value;
   }
 
@@ -610,18 +542,6 @@ class CFDictionary extends CFType implements Iterator {
   public function get($key) {
     if(isset($this->value[$key])) return $this->value[$key];
     return null;
-  }
-
-  /**
-   * Generic getter (magic)
-   * @param integer $key Key of CFType to retrieve from collection
-   * @return CFType CFType found at $key, null else
-   * @link http://php.net/oop5.overloading
-   * @uses get() to retrieve the key's value
-   * @author Sean Coates <sean@php.net>
-   */
-  public function __get($key) {
-    return $this->get($key);
   }
 
   /**
@@ -642,10 +562,9 @@ class CFDictionary extends CFType implements Iterator {
   /**
    * Get XML-Node.
    * @param DOMDocument $doc DOMDocument to create DOMNode in
-   * @param string $nodeName For compatibility reasons; just ignore it
    * @return DOMNode &lt;dict&gt;-Element
    */
-  public function toXML(DOMDocument $doc,$nodeName="") {
+  public function toXML(DOMDocument $doc) {
     $node = $doc->createElement('dict');
 
     foreach($this->value as $key => $value) {
