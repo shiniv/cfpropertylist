@@ -1,7 +1,7 @@
 <?php
 /**
  * Examples for how to use CFPropertyList
- * Create the PropertyList sample.xml.plist by using {@link CFTypeDetector}.
+ * Create the PropertyList sample.xml.plist by using CFPropertyList::guess()
  * @package plist
  * @subpackage plist.examples
  */
@@ -23,7 +23,7 @@ $plist = new CFPropertyList();
 
 /*
  * import the array structure to create the sample.xml.plist
- * We make use of CFTypeDetector, which truly is not almighty!
+ * We make use of CFPropertyList::guess(), which truly is not almighty!
  */
 
 $structure = array(
@@ -33,7 +33,7 @@ $structure = array(
   'Date Of Graduation' => gmmktime( 19, 23, 43, 06, 22, 2004 ),
   'Pets Names' => array(),
   // Note: data cannot be guessed, so this will become a CFString
-  // See example-03.php for a possible workaround
+  // See example-04.php for a possible workaround
   'Picture' => 'PEKBpYGlmYFCPA==',
   'City Of Birth' => 'Springfield',
   'Name' => 'John Doe',

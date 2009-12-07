@@ -1,7 +1,7 @@
 <?php
 /**
  * Examples for how to use CFPropertyList
- * Create the PropertyList sample.xml.plist by using {@link CFTypeDetector}.
+ * Create the PropertyList sample.xml.plist by using CFPropertyList::guess().
  * This example shows how to get around the limitation of guess() regarding {@link CFDate} and {@link CFData}.
  * @package plist
  * @subpackage plist.examples
@@ -24,7 +24,7 @@ $plist = new CFPropertyList();
 
 /*
  * import the array structure to create the sample.xml.plist
- * We make use of CFTypeDetector, which truly is not almighty!
+ * We make use of CFPropertyList::guess(), which truly is not almighty!
  */
 
 $structure = array(
