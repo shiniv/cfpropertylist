@@ -5,6 +5,10 @@
 
 This document presents the changes made to the different releases of `CFPropertyList`.
 
+== CFPropertyList 1.0.5 ==
+
+This release fixes issue 3 (default handling for NULL values in arrays) as well as issue 5 (handling strings of length 0 in binary plists).
+
 == CFPropertyList 1.0.4 ==
 This release fixes another UTF-8/UTF-16 bug and some spelling mistakes, an upgrade is strongly recommended.
 
