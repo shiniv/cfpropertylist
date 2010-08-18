@@ -7,6 +7,10 @@ This document presents the changes made to the different releases of `CFProperty
 
 == CFPropertyList 1.1 ==
 
+This release fixes a bug with parsing XML plist strings.
+
+== CFPropertyList 1.1 ==
+
 This release fixes an error with userland streams (since one can only read 8192 bytes at once from userland streams). We also implemented the feature of parsing plists from strings.
 
 == CFPropertyList 1.0.6 ==
