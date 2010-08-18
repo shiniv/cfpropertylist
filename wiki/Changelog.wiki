@@ -5,7 +5,7 @@
 
 This document presents the changes made to the different releases of `CFPropertyList`.
 
-== CFPropertyList 1.1 ==
+== CFPropertyList 1.1.1 ==
 
 This release fixes a bug with parsing XML plist strings.
 
