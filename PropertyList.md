@@ -1,0 +1,12 @@
+# Introduction #
+`PropertyList` are means to store data in a flexible yet robust manner. The standard was defined by Apple and is thus in heavy use throughout the Apple Macintosh Operation System. Any application not using a database will most likely store its data the way Mac OS X handles its preferences and settings - with simple plist files.
+
+With the uprise of the iPhone `PropertyLists` now also serve as a means to transfer data from the web to iPhone applications. Because (file)size does matter `PropertyLists` are not only available in (the pretty verbose) XML format, but also in a very compact binary form.
+
+## XML vs. Binary ##
+
+Where the XML based plist can be handled by any system or language by their built-in XML APIs, the binary plist cannot. With `CFPropertyList` one can handle XML based and binary plists without even noticing a difference at all. `CFPropertyList` offers an abstract API to create and manipulate `PropertyLists`, while offering functionality to read and write PHP array structures, XML based plists, binary based plists and of course any combinations of the former.
+
+## plist vs. PHP ##
+
+There are some pitfalls regarding plists and PHP. Where PHP's internal timestamps are unix epoch (seconds since 01.01.1970 00:00:00), plists rely on the Apple epoch (seconds since 01.01.2001 00:00:00). CFPropertyList will automatically translate between unix and apple epoch, if you don't tell it otherwise.
